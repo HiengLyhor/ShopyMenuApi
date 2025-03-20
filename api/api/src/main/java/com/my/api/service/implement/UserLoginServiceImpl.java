@@ -89,6 +89,9 @@ public class UserLoginServiceImpl implements UserLoginService {
 
                 String token = jwtService.generateToken(request.getUsername());
 
+                UserLogin userDetails = userLoginRepository.findByUsername(request.getUsername());
+
+                BeanUtils.copyProperties(userDetails, response);
                 response.setCode(HttpStatus.OK.value());
                 response.setMessage("Login successfully.");
                 response.setToken(token);
