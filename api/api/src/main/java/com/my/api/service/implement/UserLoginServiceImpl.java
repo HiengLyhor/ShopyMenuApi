@@ -1,5 +1,6 @@
 package com.my.api.service.implement;
 
+import com.my.api.config.Encryption;
 import com.my.api.config.JwtService;
 import com.my.api.dto.create.CreateUserRequest;
 import com.my.api.dto.create.CreateUserResponse;
@@ -78,6 +79,8 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         try{
 
+            request.setPassword(Encryption.decrypt(request.getPassword()));
+
             UserLoginResponse response = new UserLoginResponse();
 
             Authentication authentication = authenticationManager.authenticate(new
@@ -94,8 +97,8 @@ public class UserLoginServiceImpl implements UserLoginService {
                 BeanUtils.copyProperties(userDetails, response);
                 response.setCode(HttpStatus.OK.value());
                 response.setMessage("Login successfully.");
-                response.setToken(token);
-                response.setTokenExp(new Timestamp(System.currentTimeMillis() + 300000));
+                response.setToken(Encryption.encrypt(token));
+                response.setTokenExp(new Timestamp(System.currentTimeMillis() + 600000));
 
                 return response;
             }
