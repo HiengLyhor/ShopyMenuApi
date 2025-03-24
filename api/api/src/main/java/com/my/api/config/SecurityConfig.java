@@ -32,7 +32,12 @@ public class SecurityConfig {
 
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("v1/user/login", "v1/user/register", "/actuator", "v1/enc/encrypt", "v1/enc/decrypt")
+                        request.requestMatchers(
+                                "v1/user/login",
+                                        "v1/user/register",
+                                        "/actuator",
+                                        "v1/enc/encrypt",
+                                        "v1/enc/decrypt")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
