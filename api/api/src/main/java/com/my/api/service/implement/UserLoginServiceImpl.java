@@ -7,9 +7,13 @@ import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
 import com.my.api.dto.restaurant.RestaurantDetailResponse;
+import com.my.api.enums.ActionType;
 import com.my.api.enums.MyEnum;
+import com.my.api.enums.TableName;
+import com.my.api.model.AuditTraceModel;
 import com.my.api.model.UserLogin;
 import com.my.api.repository.UserLoginRepository;
+import com.my.api.service.AuditService;
 import com.my.api.service.RestaurantService;
 import com.my.api.service.UserLoginService;
 import org.apache.logging.log4j.util.InternalException;
@@ -51,6 +55,9 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    AuditService auditService;
 
     @Override
     public UserLoginResponse getUserDetailByUsername(String username) {
@@ -98,6 +105,8 @@ public class UserLoginServiceImpl implements UserLoginService {
             BeanUtils.copyProperties(request, response);
 
             if (authentication.isAuthenticated()) {
+
+                auditService.saveAudit(new AuditTraceModel(TableName.USER_LOGIN, ActionType.LOGIN, request.getUsername(), null, request.toString()));
 
                 String token = jwtService.generateToken(request.getUsername());
 
@@ -172,6 +181,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                 newUser.setIsSpecial('N');
             }
 
+            auditService.saveAudit(new AuditTraceModel(TableName.USER_LOGIN, ActionType.CREATE, requesterData.getUsername(), null, request.toString()));
             restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName());
             userLoginRepository.save(newUser);
 
