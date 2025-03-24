@@ -16,6 +16,8 @@ public class RestaurantDetailResponse extends StatusResponse {
 
     String shopName;
 
+    String venueName;
+
     String contactInfo;
 
     String telegramId;

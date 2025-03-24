@@ -6,6 +6,7 @@ import com.my.api.dto.create.CreateUserRequest;
 import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
+import com.my.api.dto.restaurant.RestaurantDetailResponse;
 import com.my.api.enums.MyEnum;
 import com.my.api.model.UserLogin;
 import com.my.api.repository.UserLoginRepository;
@@ -101,11 +102,14 @@ public class UserLoginServiceImpl implements UserLoginService {
                 String token = jwtService.generateToken(request.getUsername());
 
                 UserLogin userDetails = userLoginRepository.findByUsername(request.getUsername());
+                RestaurantDetailResponse restaurantInfo = restaurantService.getRestaurantInfo(userDetails.getOwnShop());
 
                 BeanUtils.copyProperties(userDetails, response);
                 response.setCode(HttpStatus.OK.value());
                 response.setMessage("Login successfully.");
                 response.setToken(Encryption.encrypt(token));
+                response.setVenueName(restaurantInfo.getVenueName());
+                response.setShopName(restaurantInfo.getShopName());
                 response.setTokenExp(new Timestamp(System.currentTimeMillis() + 600000));
 
                 return response;
@@ -168,7 +172,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                 newUser.setIsSpecial('N');
             }
 
-            restaurantService.createRestaurant(request, shopId, requesterData.getUsername());
+            restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName());
             userLoginRepository.save(newUser);
 
             response.setExpDate(new Timestamp(System.currentTimeMillis() + 604800000));

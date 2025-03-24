@@ -6,12 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "Restaurant_Client")
 public class RestaurantModel {
 
@@ -33,6 +35,9 @@ public class RestaurantModel {
 
     @Column(name = "LastModified")
     Timestamp lastModified;
+
+    @Column(name = "VenueName")
+    String venueName;
 
     public RestaurantModel() {
         this.lastModified = new Timestamp(System.currentTimeMillis());

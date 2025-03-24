@@ -5,7 +5,7 @@ import com.my.api.dto.restaurant.RestaurantDetailResponse;
 
 public interface RestaurantService {
 
-    void createRestaurant(CreateUserRequest request, String shopId, String creator);
+    void createRestaurant(CreateUserRequest request, String shopId, String creator, String venueName);
 
     RestaurantDetailResponse getRestaurantInfo(String resId);
 

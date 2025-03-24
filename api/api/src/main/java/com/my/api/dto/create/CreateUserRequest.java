@@ -39,4 +39,6 @@ public class CreateUserRequest {
 
     String telegramId;
 
+    String venueName;
+
 }

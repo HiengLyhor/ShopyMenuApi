@@ -2,10 +2,14 @@ package com.my.api.service.implement;
 
 import com.my.api.dto.create.CreateUserRequest;
 import com.my.api.dto.restaurant.RestaurantDetailResponse;
+import com.my.api.enums.ActionType;
+import com.my.api.enums.TableName;
+import com.my.api.model.AuditTraceModel;
 import com.my.api.model.RestaurantModel;
 import com.my.api.model.UserLogin;
 import com.my.api.repository.RestaurantRepository;
 import com.my.api.repository.UserLoginRepository;
+import com.my.api.service.AuditService;
 import com.my.api.service.RestaurantService;
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -24,8 +30,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     UserLoginRepository userLoginRepository;
 
+    @Autowired
+    AuditService auditService;
+
     @Override
-    public void createRestaurant(CreateUserRequest request, String shopId, String creator) {
+    public void createRestaurant(CreateUserRequest request, String shopId, String creator, String joinVenue) {
 
         try {
 
@@ -36,12 +45,29 @@ public class RestaurantServiceImpl implements RestaurantService {
             restaurantModel.setTelegramId(request.getTelegramId());
             restaurantModel.setCreateBy(creator);
 
+            if (joinVenue != null) {
+                RestaurantModel venue = restaurantRepository.findByVenueName(joinVenue);
+                if (venue != null) restaurantModel.setVenueName(venue.getVenueName());
+                else restaurantModel.setVenueName(generateVenue());
+            } else {
+                restaurantModel.setVenueName(generateVenue());
+            }
+
+            auditService.saveAudit(new AuditTraceModel(TableName.RESTAURANT_CLIENT, ActionType.CREATE, creator, null, restaurantModel.toString()));
             restaurantRepository.save(restaurantModel);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private String generateVenue() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formattedDateTime = now.format(formatter);
+
+        return "Ven" + formattedDateTime;
     }
 
     @Override

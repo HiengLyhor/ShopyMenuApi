@@ -18,6 +18,10 @@ public class UserLoginResponse extends StatusResponse {
 
     Timestamp expDate;
 
+    String venueName;
+
+    String shopName;
+
     char isSpecial;
 
     char isLock;

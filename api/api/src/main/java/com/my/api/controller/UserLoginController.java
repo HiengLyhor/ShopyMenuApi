@@ -21,7 +21,7 @@ public class UserLoginController {
         return userLoginService.login(request);
     }
 
-    @GetMapping("get/{username}")
+    @GetMapping("{username}")
     UserLoginResponse userDetailByUsername(@PathVariable String username) {
         return userLoginService.getUserDetailByUsername(username);
     }

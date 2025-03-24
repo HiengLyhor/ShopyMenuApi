@@ -3,12 +3,14 @@ package com.my.api.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "User_Login")
 public class UserLogin {
 
