@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+import static com.my.api.config.Encryption.decrypt;
+
 @Service
 public class UserLoginServiceImpl implements UserLoginService {
 
@@ -79,7 +81,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         try{
 
-            request.setPassword(Encryption.decrypt(request.getPassword()));
+            request.setPassword(decrypt(request.getPassword()));
 
             UserLoginResponse response = new UserLoginResponse();
 
@@ -143,7 +145,8 @@ public class UserLoginServiceImpl implements UserLoginService {
             UserLogin userData = new UserLogin();
 
             BeanUtils.copyProperties(request, userData);
-            userData.setPassword(encoder.encode(request.getPassword()));
+            String decryptPass = decrypt(request.getPassword());
+            userData.setPassword(encoder.encode(decryptPass));
             userData.beforeSave();
 
             if (request.getRole().equalsIgnoreCase(MyEnum.USER.toString())) {
