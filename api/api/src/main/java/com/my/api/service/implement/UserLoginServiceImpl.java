@@ -9,6 +9,7 @@ import com.my.api.dto.login.UserLoginResponse;
 import com.my.api.enums.MyEnum;
 import com.my.api.model.UserLogin;
 import com.my.api.repository.UserLoginRepository;
+import com.my.api.service.RestaurantService;
 import com.my.api.service.UserLoginService;
 import org.apache.logging.log4j.util.InternalException;
 import org.apache.logging.log4j.util.Strings;
@@ -24,6 +25,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static com.my.api.config.Encryption.decrypt;
@@ -44,6 +47,9 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Value("${credential-for-create-user}")
     private String privateString;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     @Override
     public UserLoginResponse getUserDetailByUsername(String username) {
@@ -126,34 +132,45 @@ public class UserLoginServiceImpl implements UserLoginService {
 
             BeanUtils.copyProperties(request, response);
 
-            UserLogin userLoginRepositoryByUsername = userLoginRepository.findByUsername(request.getUsername());
-
-            if (!Objects.isNull(userLoginRepositoryByUsername)) {
-                response.setCode(HttpStatus.CONFLICT.value());
-                response.setMessage("This username is already existed.");
-
-                return response;
-            }
-
             if (!request.getSpecialKey().equals(privateString)) {
-                response.setCode(HttpStatus.UNAUTHORIZED.value());
-                response.setMessage("Special key does not match.");
-
-                return response;
+                return buildErrorResponse(response, HttpStatus.UNAUTHORIZED, "Special key does not match.");
             }
 
-            UserLogin userData = new UserLogin();
+            UserLogin requesterData = userLoginRepository.findByUsername(request.getRequester());
+            if (requesterData == null) {
+                return buildErrorResponse(response, HttpStatus.UNAUTHORIZED, "Requester does not exist.");
+            }
 
-            BeanUtils.copyProperties(request, userData);
-            String decryptPass = decrypt(request.getPassword());
-            userData.setPassword(encoder.encode(decryptPass));
-            userData.beforeSave();
+            UserLogin existingUser = userLoginRepository.findByUsername(request.getUsername());
+            if (existingUser  != null) {
+                return buildErrorResponse(response, HttpStatus.CONFLICT, "This username already exists.");
+            }
+
+            if (request.getRole().equalsIgnoreCase(MyEnum.USER.toString()) && "N".equalsIgnoreCase(request.getOwnShop())) {
+                return buildErrorResponse(response, HttpStatus.CONFLICT, "Creating user with OwnShop is N is not allowed.");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            String formattedDateTime = now.format(formatter);
+
+            String shopId = "Res" + formattedDateTime;
+
+            // Create and save new user
+            UserLogin newUser = new UserLogin();
+            BeanUtils.copyProperties(request, newUser);
+            String decryptedPassword = decrypt(request.getPassword());
+            newUser.setPassword(encoder.encode(decryptedPassword));
+            newUser.setOwnShop(shopId);
+            newUser.beforeSave();
 
             if (request.getRole().equalsIgnoreCase(MyEnum.USER.toString())) {
-                userData.setIsSpecial('N');
+                newUser.setIsSpecial('N');
             }
 
-            userLoginRepository.save(userData);
+            restaurantService.createRestaurant(request, shopId, requesterData.getUsername());
+            userLoginRepository.save(newUser);
+
             response.setExpDate(new Timestamp(System.currentTimeMillis() + 604800000));
             response.setCode(HttpStatus.OK.value());
             response.setMessage("User created successfully.");
@@ -165,5 +182,11 @@ public class UserLoginServiceImpl implements UserLoginService {
             throw new InternalException("An error occurred during the process.");
         }
 
+    }
+
+    private CreateUserResponse buildErrorResponse(CreateUserResponse response, HttpStatus status, String message) {
+        response.setCode(status.value());
+        response.setMessage(message);
+        return response;
     }
 }

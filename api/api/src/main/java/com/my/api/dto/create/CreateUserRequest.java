@@ -31,4 +31,12 @@ public class CreateUserRequest {
     @NotBlank(message = "Special Key cannot be blank")
     String specialKey;
 
+    @NotNull(message = "Requester cannot be null")
+    @NotBlank(message = "Requester cannot be blank")
+    String requester;
+
+    String contactInfo;
+
+    String telegramId;
+
 }

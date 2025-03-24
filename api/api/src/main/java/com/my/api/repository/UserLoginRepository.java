@@ -9,4 +9,6 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
 
     UserLogin findByUsername(String username);
 
+    UserLogin findByOwnShop(String ownShop);
+
 }
