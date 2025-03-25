@@ -184,10 +184,13 @@ public class UserLoginServiceImpl implements UserLoginService {
 
             if (request.getRole().equalsIgnoreCase(MyEnum.USER.toString())) {
                 newUser.setIsSpecial('N');
+                restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName());
+            } else {
+                newUser.setIsSpecial('Y');
+                newUser.setOwnShop("N");
             }
 
             auditService.saveAudit(new AuditTraceModel(TableName.USER_LOGIN, ActionType.CREATE, requesterData.getUsername(), null, request.toString()));
-            restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName());
             userLoginRepository.save(newUser);
 
             response.setExpDate(new Timestamp(System.currentTimeMillis() + 604800000));
