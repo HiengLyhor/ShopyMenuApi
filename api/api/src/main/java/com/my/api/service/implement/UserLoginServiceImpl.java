@@ -7,7 +7,9 @@ import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
 import com.my.api.dto.restaurant.RestaurantDetailResponse;
+import com.my.api.dto.user.AllUserRequest;
 import com.my.api.dto.user.AllUserResponse;
+import com.my.api.dto.user.UserDetailsDto;
 import com.my.api.enums.ActionType;
 import com.my.api.enums.MyEnum;
 import com.my.api.enums.TableName;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -201,10 +204,10 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public AllUserResponse getAllUsers(String username) {
+    public AllUserResponse getAllUsers(AllUserRequest request) {
         try {
 
-            UserLogin userRequest = userLoginRepository.findByUsername(username);
+            UserLogin userRequest = userLoginRepository.findByUsername(request.getUserRequest());
 
             if (userRequest == null) {
                 return new AllUserResponse(HttpStatus.UNAUTHORIZED.value(), "You don't have rights to access this.");
@@ -215,7 +218,15 @@ public class UserLoginServiceImpl implements UserLoginService {
             }
 
             List<UserLogin> allUser = userLoginRepository.findAll();
-            return  new AllUserResponse(allUser);
+            List<UserDetailsDto> userDetailsDtos = new ArrayList<>();
+
+            for (UserLogin singleUser : allUser) {
+                UserDetailsDto singleUserDetail = new UserDetailsDto();
+                BeanUtils.copyProperties(singleUser, singleUserDetail);
+                userDetailsDtos.add(singleUserDetail);
+            }
+
+            return new AllUserResponse(userDetailsDtos);
 
         }
         catch (Exception ex) {

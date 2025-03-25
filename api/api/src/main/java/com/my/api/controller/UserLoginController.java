@@ -4,6 +4,8 @@ import com.my.api.dto.create.CreateUserRequest;
 import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
+import com.my.api.dto.user.AllUserRequest;
+import com.my.api.dto.user.AllUserResponse;
 import com.my.api.service.UserLoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,11 @@ public class UserLoginController {
     @PostMapping("register")
     CreateUserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         return userLoginService.register(request);
+    }
+
+    @PostMapping("all-user")
+    AllUserResponse getAllUsers(@RequestBody AllUserRequest request) {
+        return userLoginService.getAllUsers(request);
     }
 
 }

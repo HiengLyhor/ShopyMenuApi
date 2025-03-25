@@ -4,6 +4,7 @@ import com.my.api.dto.create.CreateUserRequest;
 import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
+import com.my.api.dto.user.AllUserRequest;
 import com.my.api.dto.user.AllUserResponse;
 import com.my.api.model.UserLogin;
 import jakarta.validation.Valid;
@@ -18,5 +19,5 @@ public interface UserLoginService {
 
     CreateUserResponse register(@Valid CreateUserRequest request);
 
-    AllUserResponse getAllUsers(String username);
+    AllUserResponse getAllUsers(AllUserRequest request);
 }
