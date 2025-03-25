@@ -7,6 +7,7 @@ import com.my.api.dto.create.CreateUserResponse;
 import com.my.api.dto.login.LoginRequest;
 import com.my.api.dto.login.UserLoginResponse;
 import com.my.api.dto.restaurant.RestaurantDetailResponse;
+import com.my.api.dto.user.AllUserResponse;
 import com.my.api.enums.ActionType;
 import com.my.api.enums.MyEnum;
 import com.my.api.enums.TableName;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 import static com.my.api.config.Encryption.decrypt;
@@ -196,6 +198,29 @@ public class UserLoginServiceImpl implements UserLoginService {
             throw new InternalException("An error occurred during the process.");
         }
 
+    }
+
+    @Override
+    public AllUserResponse getAllUsers(String username) {
+        try {
+
+            UserLogin userRequest = userLoginRepository.findByUsername(username);
+
+            if (userRequest == null) {
+                return new AllUserResponse(HttpStatus.UNAUTHORIZED.value(), "You don't have rights to access this.");
+            }
+
+            if (userRequest.getIsSpecial() != 'Y') {
+                return new AllUserResponse(HttpStatus.UNAUTHORIZED.value(), "You don't have permission to access.");
+            }
+
+            List<UserLogin> allUser = userLoginRepository.findAll();
+            return  new AllUserResponse(allUser);
+
+        }
+        catch (Exception ex) {
+            return new AllUserResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error occurred during the request.");
+        }
     }
 
     private CreateUserResponse buildErrorResponse(CreateUserResponse response, HttpStatus status, String message) {
