@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.my.api.dto.StatusResponse;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 import java.sql.Timestamp;
 
@@ -20,5 +21,14 @@ public class CreateUserResponse extends StatusResponse {
     String role;
 
     Timestamp expDate;
+
+    public CreateUserResponse() {}
+
+    public CreateUserResponse errorResponse(String message) {
+        CreateUserResponse response = new CreateUserResponse();
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setMessage(message);
+        return response;
+    }
 
 }

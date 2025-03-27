@@ -136,7 +136,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         }
         catch (Exception ex) {
-            throw new InternalException("An error occurred during the process.");
+            return new UserLoginResponse().responseError(ex.getMessage());
         }
 
     }
@@ -150,7 +150,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
             BeanUtils.copyProperties(request, response);
 
-            if (!request.getSpecialKey().equals(privateString)) {
+            if (!decrypt(request.getSpecialKey()).equals(privateString)) {
                 return buildErrorResponse(response, HttpStatus.UNAUTHORIZED, "Special key does not match.");
             }
 
@@ -201,7 +201,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         }
         catch (Exception ex) {
-            throw new InternalException("An error occurred during the process.");
+            return new CreateUserResponse().errorResponse(ex.getMessage());
         }
 
     }
