@@ -31,15 +31,19 @@ public class RestaurantDetailResponse extends StatusResponse {
     Timestamp expireDate;
 
     public RestaurantDetailResponse noRecordFound() {
-        return new RestaurantDetailResponse("404");
+        RestaurantDetailResponse response = new RestaurantDetailResponse();
+        response.setCode(HttpStatus.NOT_FOUND.value());
+        response.setMessage("Record does not found in our system.");
+        return response;
     }
 
-    RestaurantDetailResponse(String notFound) {
-        this.setCode(HttpStatus.NOT_FOUND.value());
-        this.setMessage("Restaurant not found.");
+    public RestaurantDetailResponse errorResponse(String message) {
+        RestaurantDetailResponse response = new RestaurantDetailResponse();
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setMessage(message);
+        return response;
     }
 
-    public RestaurantDetailResponse() {
-    }
+    public RestaurantDetailResponse() {}
 
 }

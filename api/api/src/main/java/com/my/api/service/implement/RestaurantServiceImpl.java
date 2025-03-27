@@ -94,7 +94,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             return restaurantDetailResponse;
 
         } catch (Exception e) {
-            throw new InternalException("An error occurred during the process.");
+            return new RestaurantDetailResponse().errorResponse(e.getMessage());
         }
 
     }
