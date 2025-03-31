@@ -11,7 +11,6 @@ import com.my.api.repository.RestaurantRepository;
 import com.my.api.repository.UserLoginRepository;
 import com.my.api.service.AuditService;
 import com.my.api.service.RestaurantService;
-import org.apache.logging.log4j.util.InternalException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
