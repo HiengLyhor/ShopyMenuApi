@@ -28,6 +28,13 @@ public class ItemServiceImpl implements ItemService {
                 return new StatusResponse().errorResponse("Request data is invalid.");
             }
 
+            // Validate name & ownShop
+            MenuModel byNameAndOwnShop = itemRepository.findByNameAndOwnShop(request.getMenuName(), request.getOwnShop());
+
+            if (byNameAndOwnShop != null) {
+                return new StatusResponse().errorResponse("Your menu name is already existed.");
+            }
+
             byte[] imageByte = Base64.getDecoder().decode(request.getImageData());
 
             MenuModel menuModel = new MenuModel(request.getOwnShop());
@@ -68,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
 
         if (request == null) return false;
 
-        return (request.getOwnShop() != null) && (request.getImageData() != null) && (request.getMenuName() != null) && (request.getPrice() > 0);
+        return (request.getOwnShop() != null) && (request.getImageData() != null && !request.getImageData().isEmpty()) && (request.getMenuName() != null) && (request.getPrice() > 0);
 
     }
 
@@ -76,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
 
         if (request == null) return false;
 
-        return (request.getMenuId() != null) && (request.getOwnShop() != null) && (request.getImageData() != null) && (request.getMenuName() != null) && (request.getPrice() > 0);
+        return (request.getMenuId() != null) && (request.getOwnShop() != null) && (request.getImageData() != null && !request.getImageData().isEmpty()) && (request.getMenuName() != null) && (request.getPrice() > 0);
 
     }
 

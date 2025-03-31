@@ -12,4 +12,6 @@ public interface ItemRepository extends JpaRepository<MenuModel, RestaurantFoodP
 
     Optional<MenuModel> findByFoodId(String foodId);
 
+    MenuModel findByNameAndOwnShop(String name, String ownShop);
+
 }
