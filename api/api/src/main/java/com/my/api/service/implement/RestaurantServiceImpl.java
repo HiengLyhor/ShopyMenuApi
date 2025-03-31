@@ -33,13 +33,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     AuditService auditService;
 
     @Override
-    public void createRestaurant(CreateUserRequest request, String shopId, String creator, String joinVenue) {
+    public void createRestaurant(CreateUserRequest request, String shopId, String creator, String joinVenue, String shopName) {
 
         try {
 
             RestaurantModel restaurantModel = new RestaurantModel();
             restaurantModel.setOwnShop(shopId);
-            restaurantModel.setShopName(request.getOwnShop());
+            restaurantModel.setShopName(shopName);
             restaurantModel.setContactInfo(request.getContactInfo());
             restaurantModel.setTelegramId(request.getTelegramId());
             restaurantModel.setCreateBy(creator);

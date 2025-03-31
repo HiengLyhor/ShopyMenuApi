@@ -184,7 +184,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
             if (request.getRole().equalsIgnoreCase(MyEnum.USER.toString())) {
                 newUser.setIsSpecial('N');
-                restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName());
+                restaurantService.createRestaurant(request, shopId, requesterData.getUsername(), request.getVenueName(), request.getShopName());
             } else {
                 newUser.setIsSpecial('Y');
                 newUser.setOwnShop("N");

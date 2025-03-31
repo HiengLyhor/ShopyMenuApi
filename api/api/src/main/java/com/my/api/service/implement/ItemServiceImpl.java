@@ -2,8 +2,12 @@ package com.my.api.service.implement;
 
 import com.my.api.dto.StatusResponse;
 import com.my.api.dto.menu.ItemRequest;
+import com.my.api.enums.ActionType;
+import com.my.api.enums.TableName;
+import com.my.api.model.AuditTraceModel;
 import com.my.api.model.MenuModel;
 import com.my.api.repository.ItemRepository;
+import com.my.api.service.AuditService;
 import com.my.api.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    AuditService auditService;
 
     @Override
     public StatusResponse createNewMenu(ItemRequest request) {
@@ -45,6 +52,8 @@ public class ItemServiceImpl implements ItemService {
             menuModel.setFoodDetail(request.getDescription());
             menuModel.setFoodImg(imageByte);
 
+            request.setImageData("Check in DB");
+            auditService.saveAudit(new AuditTraceModel(TableName.RESTAURANT_FOOD, ActionType.CREATE, request.getRequester(), null, request.toString()));
             itemRepository.save(menuModel);
 
             return new StatusResponse().successResponse();

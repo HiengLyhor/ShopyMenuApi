@@ -25,12 +25,12 @@ public class CreateUserRequest {
     @NotBlank(message = "Role cannot be blank")
     String role;
 
-    @NotNull(message = "Shop own cannot be null")
-    @NotBlank(message = "Shop own cannot be blank")
+    @NotNull(message = "OwnShop cannot be null")
+    @NotBlank(message = "OwnShop cannot be blank")
     String ownShop;
 
-    @NotNull(message = "Special Key cannot be null")
-    @NotBlank(message = "Special Key cannot be blank")
+    @NotNull(message = "SpecialKey cannot be null")
+    @NotBlank(message = "SpecialKey cannot be blank")
     String specialKey;
 
     @NotNull(message = "Requester cannot be null")
@@ -42,5 +42,9 @@ public class CreateUserRequest {
     String telegramId;
 
     String venueName;
+
+    @NotNull(message = "ShopName cannot be null")
+    @NotBlank(message = "ShopName cannot be blank")
+    String shopName;
 
 }
