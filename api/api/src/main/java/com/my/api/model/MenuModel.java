@@ -45,9 +45,6 @@ public class MenuModel {
     @Column(name = "food_img")
     byte[] foodImg;
 
-    @Column(name = "Venue_Name")
-    String venueName;
-
     public MenuModel(String ownShop) {
         this.isActive = "Y";
         this.createDate = new Timestamp(System.currentTimeMillis());

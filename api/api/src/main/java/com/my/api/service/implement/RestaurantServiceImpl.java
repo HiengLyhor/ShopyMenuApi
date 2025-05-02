@@ -46,7 +46,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
             if (joinVenue != null) {
                 RestaurantModel venue = restaurantRepository.findByVenueName(joinVenue);
-                if (venue != null) restaurantModel.setVenueName(venue.getVenueName());
+                if (venue != null) {
+                    restaurantModel.setVenueName(venue.getVenueName());
+                    restaurantModel.setOwnShop(venue.getShopName());
+                }
                 else restaurantModel.setVenueName(generateVenue());
             } else {
                 restaurantModel.setVenueName(generateVenue());

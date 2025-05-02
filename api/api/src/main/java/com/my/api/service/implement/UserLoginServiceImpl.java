@@ -72,16 +72,23 @@ public class UserLoginServiceImpl implements UserLoginService {
             UserLoginResponse response = new UserLoginResponse();
 
             if (Strings.isBlank(username)) {
-                throw new InternalException("Username cannot be empty.");
+                return new UserLoginResponse().responseError("Username cannot be empty.");
             }
 
             UserLogin userByUsername = userLoginRepository.findByUsername(username);
 
             if (Objects.isNull(userByUsername)) {
-                throw new UsernameNotFoundException("User cannot be found.");
+                return new UserLoginResponse().responseError("User cannot be found.");
             }
 
             BeanUtils.copyProperties(userByUsername, response);
+
+            // Get info from Restaurant_Client
+            RestaurantDetailResponse restaurantInfo = restaurantService.getRestaurantInfo(userByUsername.getOwnShop());
+            if (!Objects.isNull(restaurantInfo)) {
+                response.setVenueName(restaurantInfo.getVenueName());
+                response.setShopName(restaurantInfo.getShopName());
+            }
 
             response.setCode(HttpStatus.OK.value());
             response.setMessage("Data retrieved successfully.");

@@ -64,7 +64,6 @@ public class ItemServiceImpl implements ItemService {
             menuModel.setPrice(request.getPrice());
             menuModel.setFoodDetail(request.getDescription());
             menuModel.setFoodImg(imageByte);
-            menuModel.setVenueName(venueName);
 
             request.setImageData("Check in DB");
             auditService.saveAudit(new AuditTraceModel(TableName.RESTAURANT_FOOD, ActionType.CREATE, request.getRequester(), null, request.toString()));
